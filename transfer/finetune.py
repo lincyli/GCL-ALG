@@ -26,7 +26,7 @@ from transfer.chem_loader import MoleculeDataset
 
 
 def get_args():
-    # Training settings
+     Training settings
     parser = argparse.ArgumentParser(description='PyTorch implementation of pre-training of graph neural networks')
 
     parser.add_argument('--cl_exp_dir', type=str, default="")
@@ -102,11 +102,11 @@ def train(args, model, device, loader, optimizer):
         pred = model(data.x, data.edge_index, data.edge_attr, data.batch)
         y = data.y.view(pred.shape).to(torch.float64)
 
-        # Whether y is non-null or not.
+         Whether y is non-null or not.
         is_valid = y ** 2 > 0
-        # Loss matrix
+         Loss matrix
         loss_mat = criterion(pred.double(), (y + 1) / 2)
-        # loss matrix after removing null target
+         loss matrix after removing null target
         loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
 
         optimizer.zero_grad()
@@ -144,7 +144,7 @@ def eval(args, model, device, loader):
         print("Some target is missing!")
         print("Missing ratio: %f" % (1 - float(len(roc_list)) / y_true.shape[1]))
 
-    return sum(roc_list) / len(roc_list)  # y_true.shape[1]
+    return sum(roc_list) / len(roc_list) 
 
 
 if __name__ == "__main__":
