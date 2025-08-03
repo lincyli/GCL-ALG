@@ -65,7 +65,7 @@ class TUDataset_aug(InMemoryDataset):
 
     def __init__(self, root, name, transform=None, pre_transform=None,
                  pre_filter=None, use_node_attr=False, use_edge_attr=False,
-                 cleaned=False, aug=None): #aug=dnodes
+                 cleaned=False, aug=None): 
         self.name = name
         self.cleaned = cleaned
         super(TUDataset_aug, self).__init__(root, transform, pre_transform,
@@ -78,15 +78,13 @@ class TUDataset_aug(InMemoryDataset):
             num_edge_attributes = self.num_edge_attributes
             self.data.edge_attr = self.data.edge_attr[:, num_edge_attributes:]
         if not (self.name == 'MUTAG' or self.name == 'PTC_MR' or self.name == 'DD' or self.name == 'PROTEINS' or self.name == 'NCI1' or self.name == 'NCI109'):
-            # 所有边的源节点
+            
             edge_index = self.data.edge_index[0, :].numpy()
-            # edge的边数 193062
             _, num_edge = self.data.edge_index.size()
-            #得到所有具有边的节点----------不懂
             nlist = [edge_index[n] + 1 for n in range(num_edge - 1) if edge_index[n] > edge_index[n + 1]]
             nlist.append(edge_index[-1] + 1)
 
-            num_node = np.array(nlist).sum() #tuple
+            num_node = np.array(nlist).sum()
             self.data.x = torch.ones((num_node, 1))
 
             edge_slice = [0]
@@ -175,7 +173,7 @@ class TUDataset_aug(InMemoryDataset):
     def __repr__(self):
         return '{}({})'.format(self.name, len(self))
 
-    def get_num_feature(self):#特征数
+    def get_num_feature(self):
         data = self.data.__class__()
 
         if hasattr(self.data, '__num_nodes__'):
@@ -198,13 +196,11 @@ class TUDataset_aug(InMemoryDataset):
 
     def get(self, idx):
         data = self.data.__class__()
-        # print("!11111")
         if hasattr(self.data, '__num_nodes__'):
             data.num_nodes = self.data.__num_nodes__[idx]
 
 
         for key in self.data.keys:
-            # print(key)
             item = self.data[key]
             if key in self.slices.keys():
                 slices = self.slices[key]
@@ -219,7 +215,7 @@ class TUDataset_aug(InMemoryDataset):
 
 
         node_num = data.edge_index.max()
-        sl = torch.tensor([[n,n] for n in range(node_num)]).t() #自循环
+        sl = torch.tensor([[n,n] for n in range(node_num)]).t()
         data.edge_index = torch.cat((data.edge_index, sl), dim=1)
 
         if self.aug == 'dnodes':
@@ -297,7 +293,6 @@ def drop_nodes(data):
     idx_nondrop = [n for n in range(node_num) if not n in idx_drop]
     idx_dict = {idx_nondrop[n]:n for n in list(range(node_num - drop_num))}
 
-    # data.x = data.x[idx_nondrop]
     edge_index = data.edge_index.numpy()
 
     adj = torch.zeros((node_num, node_num))
