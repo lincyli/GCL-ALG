@@ -48,7 +48,6 @@ def EdgePerturb(data, aug_ratio):
     data.edge_index = edge_index
     return data
 
-# same function as GraphCL but in torch_geometric
 def Subgraph(data, aug_ratio):
     data = copy.deepcopy(data)
     
@@ -63,10 +62,8 @@ def Subgraph(data, aug_ratio):
     keep_idx = None
     diff = None
 
-    # print("sub_num:", sub_num)
     for k in range(1, sub_num):
         keep_idx, _, _, _ = k_hop_subgraph(last_idx, 1, edge_index)
-        # print("subgraph: {}, keep_idx size: {}".format(k, keep_idx.shape[0]) )
         if keep_idx.shape[0] == last_idx.shape[0] or keep_idx.shape[0] >= sub_num or k == sub_num - 1:
             combined = torch.cat((last_idx, keep_idx)).to(edge_index.device)
             uniques, counts = combined.unique(return_counts=True)
