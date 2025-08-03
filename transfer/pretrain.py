@@ -112,7 +112,6 @@ class graphcl(nn.Module):
         super().__init__()
         self.gnn = gnn
         self.pool = global_mean_pool
-        # self.cls_head = nn.Sequential(nn.ReLU(inplace=True), nn.Linear(300, dataset.num_classes))
         self.projection_head = nn.Sequential(nn.Linear(300, 300), nn.ReLU(inplace=True), nn.Linear(300, 300))
         self.cls_head = nn.Sequential(nn.Linear(300, 1))
 
@@ -126,7 +125,6 @@ class graphcl(nn.Module):
     def forward(self, data):
         x, edge_index, edge_attr, batch = data.x, data.edge_index, data.edge_attr, data.batch
         x = self.gnn(None,x, edge_index, edge_attr)
-        # x = self.gnn(x,edge_index,edge_attr)
         x = self.pool(x, batch)
         x = self.projection_head(x)
         x = self.cls_head(x)
@@ -230,7 +228,7 @@ def eval(args, model, device, loader):
         print("Some target is missing!")
         print("Missing ratio: %f" %(1 - float(len(roc_list))/y_true.shape[1]))
 
-    return sum(roc_list)/len(roc_list) #y_true.shape[1]
+    return sum(roc_list)/len(roc_list) 
 
 def train_node_view_cl(view_gen1, view_gen2, view_optimizer, model, optimizer, data_loader, device, args, logger):
     model.train()
@@ -295,7 +293,7 @@ def train_node_view_cl_with_sim(view_gen1, view_gen2, view_optimizer, model, opt
 
             input_pair1, input_pair2 = random.choices(input_pair_list, k=2)
 
-            out1 = model.forward_cl(input_pair1[1], input_pair1[0]) #sample_node torch.Size([6519])
+            out1 = model.forward_cl(input_pair1[1], input_pair1[0]) 
             out2 = model.forward_cl(input_pair2[1], input_pair2[0])
 
             cl_loss = loss_cl(out1, out2)
