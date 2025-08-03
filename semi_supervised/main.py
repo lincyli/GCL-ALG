@@ -282,10 +282,6 @@ def run_joint_cl_exp(args, device, logger):
             dataset_feat_net_triples):
         logger.info('{}/{} - {} - {} - {}'.format(
             exp_id + 1, exp_nums, dataset_name, feat_str, net))
-    '''
-    flush()的作用是刷新缓冲区。
-    缓冲区的刷新有三种:1,缓冲区满自动刷新；2，flush刷新；3，程序结束自动刷新
-    '''
     sys.stdout.flush()
 
     for exp_id, (dataset_name, feat_str, net) in enumerate(
@@ -318,7 +314,7 @@ def run_joint_cl_exp(args, device, logger):
         summary1 = 'data={}, model={}, feat={}, eval={}'.format(
             dataset_name, net, feat_str, args.epoch_select)
         summary2 = 'train_acc={:.2f}, test_acc={:.2f} ± {:.2f}, sec={}'.format(
-            train_acc * 100, acc * 100, std * 100, round(duration, 2))  # round() 方法返回浮点数x的四舍五入值。
+            train_acc * 100, acc * 100, std * 100, round(duration, 2))  
         results += ['{}: {}, {}'.format('fin-result', summary1, summary2)]
         logger.info('{}: {}, {}'.format('mid-result', summary1, summary2))
     logger.info('-----\n{}'.format('\n'.join(results)))
@@ -354,15 +350,15 @@ if __name__ == '__main__':
 
     args.save = '{}-{}-{}'.format(args.dataset, args.save, time.strftime("%Y%m%d-%H%M%S"))
     args.save = os.path.join('exp', args.exp, args.save)
-    # create_exp_dir(args.save, glob.glob('*.py'))
+    create_exp_dir(args.save, glob.glob('*.py'))
 
     log_format = '%(asctime)s %(message)s'
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format=log_format, datefmt='%m/%d %I:%M:%S %p')
-    # fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
-    # fh.setFormatter(logging.Formatter(log_format))
+    fh = logging.FileHandler(os.path.join(args.save, 'log.txt'))
+    fh.setFormatter(logging.Formatter(log_format))
     logger = logging.getLogger()
-    # logger.addHandler(fh)
+    logger.addHandler(fh)
     logger.info(args)
 
 
