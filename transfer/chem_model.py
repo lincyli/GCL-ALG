@@ -351,7 +351,7 @@ class GNN_CL(torch.nn.Module):
 
         h_list = [x]
         for layer in range(self.num_layer):
-            h = self.gnns[layer](h_list[layer], edge_index, edge_attr)# x:torch.Size([6519, 2]) edge_index:torch.Size([6519]) edge_attr:torch.Size([2622, 2])
+            h = self.gnns[layer](h_list[layer], edge_index, edge_attr)
             h = self.batch_norms[layer](h)
             #h = F.dropout(F.relu(h), self.drop_ratio, training = self.training)
             if layer == self.num_layer - 1:
@@ -437,23 +437,7 @@ class GNN_graphpred(torch.nn.Module):
             self.graph_pred_linear = torch.nn.Linear(self.mult * self.emb_dim, self.num_tasks)
 
     def from_pretrained(self, device, model_file):
-        #self.gnn = GNN(self.num_layer, self.emb_dim, JK = self.JK, drop_ratio = self.drop_ratio)
-        '''
-        1. torch.load()
-        函数格式为：torch.load(f, map_location=None, pickle_module=pickle, **pickle_load_args)一般我们使用的时候，基本只使用前两个参数。
-        map_location参数: 具体来说，map_location参数是用于重定向，比如此前模型的参数是在cpu中的，我们希望将其加载到cuda:0中。或者我们有多张卡，那么我们就可以将卡1中训练好的模型加载到卡2中，这在数据并行的分布式深度学习中可能会用到。
-        （1）map_location=None
-        不指定map_location，默认以训练保存模型时的位置加载，也就是训练在cuda:0，在不指定map_location时，load也是在cuda:0上，相应的训练在cuda:1，那么load也在cuda:1上
-        (2）map_location=cpu 将模型参数加载在CPU上
-        2.torch.load_state_dict()
-        在pytorch中构建好一个模型后，一般需要将torch.load()的预训练权重加载到自己的模型重。
-        torch.load_state_dict()函数就是用于将预训练的参数权重加载到新的模型之中
-        在load_state_dict中，我们重点关注的是属性 strict，当strict=True,要求预训练权重层数的键值与新构建的模型中的权重层数名称
-        完全吻合；如果新构建的模型在层数上进行了部分微调，则上述代码就会报错：说key对应不上。
-        此时，如果我们采用strict=False 就能够完美的解决这个问题。与训练权重中与新构建网络中匹配层的键值就进行使用，没有的就默认初始化。
-
-        '''
-        self.gnn.load_state_dict(torch.load(model_file, map_location=device))  #加载模型
+        self.gnn.load_state_dict(torch.load(model_file, map_location=device))  
         # for param in self.gnn.parameters():
         #     param.requires_grad = False
 
