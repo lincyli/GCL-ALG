@@ -115,11 +115,11 @@ def loss_cl(x1, x2):
     x1_abs = x1.norm(dim=1)
     x2_abs = x2.norm(dim=1)
 
-    sim_matrix_a = torch.einsum('ik,jk->ij', x1, x2) / torch.einsum('i,j->ij', x1_abs, x2_abs)  # sim（z1,z2）
+    sim_matrix_a = torch.einsum('ik,jk->ij', x1, x2) / torch.einsum('i,j->ij', x1_abs, x2_abs)  
     sim_matrix_a = torch.exp(sim_matrix_a / T)
     pos_sim_a = sim_matrix_a[range(batch_size), range(batch_size)]
     loss_a = pos_sim_a / (sim_matrix_a.sum(dim=1) - pos_sim_a)
-    loss_a = - torch.log(loss_a).mean()  # 全部
+    loss_a = - torch.log(loss_a).mean() 
 
     sim_matrix_b = torch.einsum('ik,jk->ij', x2, x1) / torch.einsum('i,j->ij', x2_abs, x1_abs)
     sim_matrix_b = torch.exp(sim_matrix_b / T)
@@ -163,8 +163,8 @@ def train_cl(view_gen1, view_gen2, view_optimizer, model, optimizer, data_loader
 
 def eval_acc(model, data_loader, device):
     model.eval()
-    emb, y = model.encoder.get_embeddings(data_loader, device)  #
-    acc, std = evaluate_embedding(emb, y)  # svc
+    emb, y = model.encoder.get_embeddings(data_loader, device)  
+    acc, std = evaluate_embedding(emb, y)  
     return acc, std
 
 
@@ -235,7 +235,6 @@ def cl_exp(args):
         train_loss = train_cl(view_gen1, view_gen2, view_optimizer, model, optimizer, data_loader, device)
         logger.info('Epoch: {}, Loss: {:.4f}'.format(epoch, train_loss))
         if epoch % log_interval == 0:
-        # if epoch % 1 == 0:
             test_acc, test_std = eval_acc(model, data_eval_loader, device)
             test_accs.append(test_acc)
             if test_acc > best_test_acc:
