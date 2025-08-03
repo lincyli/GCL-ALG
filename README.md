@@ -21,7 +21,7 @@ $ python download_dataset.py
 ## Semi-supervised Learning
 
 ```shell
-$ python main.py --exp=joint_cl_exp --semi_split=10 --dataset=MUTAG --save=joint_cl_exp --epochs=100 --batch_size=128 --lr=0.001
+$ python main.py --exp=joint_cl_exp --semi_split=10 --dataset=IMDB-BINARY --save=joint_cl_exp --epochs=100 --batch_size=128 --lr=0.001
 ```
 
 ## Unsupervised Learning
